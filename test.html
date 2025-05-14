@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"> <!-- Menentukan encoding karakter -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsif untuk perangkat mobile -->
+  <title>Form Kunjungan</title> <!-- Judul halaman di tab browser -->
+  <style>
+    /* Reset default style semua elemen */
+    *{margin:0;padding:0;box-sizing:border-box}
+    
+    /* Gaya dasar body */
+    body{font-family:'Segoe UI',sans-serif;background:url('Background.jpg') fixed;background-size:cover;padding:20px;color:#333}
+    
+    /* Container utama dengan background putih transparan */
+    .container{background:rgba(255,255,255,0.85);border-radius:15px;padding:25px;max-width:1200px;margin:0 auto;box-shadow:0 5px 15px rgba(0,0,0,0.2)}
+    
+    /* Header yang memuat logo dan nama lembaga */
+    .header{display:flex;align-items:center;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid rgba(255,105,60,0.3)}
+    
+    /* Ukuran logo */
+    .header img{width:100px;margin-right:20px}
+    
+    /* Judul utama */
+    .header h1{font-size:1.5rem;color:#ff5e62}
+    
+    /* Alamat lembaga */
+    .header p{font-size:0.9rem;margin-top:8px;color:#666}
+    
+    /* Layout fleksibel form & tabel */
+    .content{display:flex;gap:25px;margin-top:20px}
+    
+    /* Style untuk dua bagian: form dan tabel */
+    .form,.table-area{background:rgba(255,255,255,0.9);padding:25px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,0.1)}
+    
+    /* Lebar form */
+    .form{width:48%;min-width:400px}
+    
+    /* Lebar area tabel */
+    .table-area{width:52%}
+    
+    /* Gaya label */
+    label{display:block;font-weight:600;margin:15px 0 8px;color:#ff5e62}
+    
+    /* Gaya input text */
+    input{width:100%;padding:10px 12px;border:none;border-bottom:2px solid #ff9966;background:rgba(255,255,255,0.7);font-size:1rem;border-radius:4px 4px 0 0}
+    
+    /* Area kamera/video */
+    .camera-container{width:100%;height:200px;margin:15px 0;background:linear-gradient(to bottom,#ffecd2,#fcb69f);border-radius:10px;overflow:hidden;position:relative}
+    
+    /* Ukuran preview video/foto */
+    video,.photo-preview{width:100%;height:100%;object-fit:cover}
+    
+    /* Tombol kamera */
+    .camera-controls{display:flex;gap:12px;margin:12px 0}
+    
+    /* Gaya umum tombol */
+    button{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.2s}
+    
+    /* Gaya warna tombol */
+    .btn-primary{background:#ff5e62;color:white}
+    .btn-secondary{background:#ff9966;color:white}
+    .btn-danger{background:#ff4757;color:white}
+    
+    /* Efek hover tombol */
+    button:hover{transform:translateY(-2px);box-shadow:0 3px 8px rgba(0,0,0,0.15)}
+    
+    /* Gaya tabel */
+    table{width:100%;border-collapse:collapse;margin-top:15px}
+    
+    /* Padding dan border pada tabel */
+    th,td{padding:12px;text-align:left;border-bottom:1px solid #ffddd2}
+    
+    /* Gaya header tabel */
+    th{background:#ff7e5f;color:white}
+    
+    /* Tombol hapus semua data */
+    .clear-all{float:right;margin-bottom:15px;padding:8px 16px}
+  </style>
+</head>
+<body>
+  <!-- Container utama -->
+  <div class="container">
+    <!-- Bagian header -->
+    <div class="header">
+      <!-- Logo pesantren -->
+      <img src="Logo.png" alt="logo">
+      <div>
+        <!-- Nama lembaga -->
+        <h1>Pesantren Tahfidz Qur'an Dan Digital Ar-Rahman</h1>
+        <!-- Alamat lengkap pesantren -->
+        <p>Rukan Hexa Green Kalimalang, Jl. Inspeksi Kalimalang C8-C9, Jatimulya, Kec. Tambun Sel., Kabupaten Bekasi</p>
+      </div>
+    </div>
+
+    <!-- Dua kolom: form dan tabel -->
+    <div class="content">
+      <!-- Form input data kunjungan -->
+      <form class="form" id="visitForm">
+        <!-- Input nama -->
+        <label>Nama<input type="text" id="name" placeholder="Nama lengkap" required></label>
+        <!-- Input tujuan -->
+        <label>Tujuan<input type="text" id="purpose" placeholder="Tujuan kunjungan" required></label>
+        <!-- Input identitas -->
+        <label>Identitas<input type="text" id="identity" placeholder="Visitor/WaliMurid" required></label>
+
+        <!-- Label kamera -->
+        <label>Ambil Foto</label>
+        <!-- Container kamera -->
+        <div class="camera-container">
+          <!-- Video streaming kamera -->
+          <video id="liveCamera" autoplay playsinline style="display:none"></video>
+          <!-- Preview gambar -->
+          <div id="photoPreview" style="height:100%;display:flex;justify-content:center;align-items:center;color:#666;font-size:1.1rem">Pratinjau foto akan muncul disini</div>
+        </div>
+        <!-- Tombol kontrol kamera -->
+        <div class="camera-controls">
+          <!-- Tombol aktifkan kamera -->
+          <button type="button" class="btn-primary" id="startCamera">Aktifkan Kamera</button>
+          <!-- Tombol ambil foto -->
+          <button type="button" class="btn-secondary" id="takePhoto" disabled>Ambil Foto</button>
+        </div>
+        <!-- (Alternatif) Upload manual -->
+        <input type="file" id="photoUpload" accept="image/*" style="display:none">
+        
+        <!-- Tombol submit dan reset -->
+        <div style="margin-top:20px;display:flex;gap:12px">
+          <button type="submit" class="btn-primary" id="submitBtn">Simpan Kunjungan</button>
+          <button type="reset" class="btn-danger" id="resetBtn">Reset Form</button>
+        </div>
+      </form>
+
+      <!-- Bagian tabel daftar kunjungan -->
+      <div class="table-area">
+        <!-- Tombol hapus semua -->
+        <button id="clearAllBtn" class="btn-danger clear-all">Hapus Semua Data</button>
+        <h2 style="color:#ff5e62;font-size:1.3rem">Daftar Kunjungan</h2>
+        <!-- Tabel daftar pengunjung -->
+        <table id="visitorTable">
+          <thead><tr><th>Nama</th><th>Tujuan</th><th>Identitas</th><th>Tanggal</th><th>Foto</th></tr></thead>
+          <!-- Data akan dimasukkan via JavaScript -->
+          <tbody id="visitorList"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elemen video dari kamera
+    const video = document.getElementById('liveCamera');
+    // Tempat pratinjau foto
+    const preview = document.getElementById('photoPreview');
+    // Tombol mulai kamera
+    const startBtn = document.getElementById('startCamera');
+    // Tombol ambil foto
+    const takeBtn = document.getElementById('takePhoto');
+    // Input upload foto
+    const uploadBtn = document.getElementById('photoUpload');
+    // Form kunjungan
+    const form = document.getElementById('visitForm');
+    // Variabel stream kamera
+    let stream = null;
+
+    // Fungsi mengaktifkan kamera
+    startBtn.addEventListener('click', async () => {
+      try {
+        // Akses kamera
+        stream = await navigator.mediaDevices.getUserMedia({ video: { width: 500, height: 300 } });
+        // Tampilkan ke elemen video
+        video.srcObject = stream;
+        // Tampilkan video
+        video.style.display = 'block';
+        // Sembunyikan pratinjau awal
+        preview.style.display = 'none';
+        // Aktifkan tombol ambil foto
+        takeBtn.disabled = false;
+        // Nonaktifkan tombol start
+        startBtn.disabled = true;
+      } catch (err) {
+        // Jika ditolak
+        alert("Izinkan akses kamera untuk mengambil foto");
+      }
+    });
+
+    // Fungsi ambil foto dari kamera
+    takeBtn.addEventListener('click', () => {
+      // Buat canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      // Salin dari video ke canvas
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      // Tampilkan foto
+      preview.innerHTML = `<img src="${canvas.toDataURL('image/png')}" style="width:100%;height:100%;object-fit:cover;">`;
+      // Matikan kamera
+      stream.getTracks().forEach(track => track.stop());
+      startBtn.disabled = false;
+      takeBtn.disabled = true;
+    });
+
+    // Fungsi upload manual foto (jika ingin upload file)
+    uploadBtn.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          // Pratinjau file
+          preview.innerHTML = `<img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Fungsi saat form dikirim
+    form.addEventListener('submit', (e) => {
+      // Mencegah reload halaman
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const purpose = document.getElementById('purpose').value;
+      const identity = document.getElementById('identity').value;
+      
+      // Waktu sekarang
+      const date = new Date().toLocaleString('id-ID');
+      // Ambil src foto
+      const photo = preview.querySelector('img')?.src || '-';
+      const row = `<tr><td>${name}</td><td>${purpose}</td><td>${identity}</td><td>${date}</td><td>${photo !== '-' ? `<img src="${photo}" width="60">` : '-'}</td></tr>`;
+      // Tambah ke tabel
+      document.getElementById('visitorList').insertAdjacentHTML('afterbegin', row);
+      
+      // Ambil data lama
+      const visitors = JSON.parse(localStorage.getItem('visitors') || []);
+      // Tambah data baru di awal
+      visitors.unshift({ name, purpose, identity, date, photo });
+      // Simpan kembali
+      localStorage.setItem('visitors', JSON.stringify(visitors));
+      
+      // Reset form input
+      form.reset();
+      // Reset preview
+      preview.innerHTML = 'Pratinjau foto akan muncul disini';
+      // Matikan kamera jika masih aktif
+      if (stream) stream.getTracks().forEach(track => track.stop());
+      startBtn.disabled = false;
+      takeBtn.disabled = true;
+    });
+
+    // Fungsi hapus semua data
+    document.getElementById('clearAllBtn').addEventListener('click', () => {
+      if (confirm('Yakin hapus semua data?')) {
+        // Hapus dari localStorage
+        localStorage.removeItem('visitors');
+        // Kosongkan tabel
+        document.getElementById('visitorList').innerHTML = '';
+      }
+    });
+
+    // Saat halaman dibuka, muat ulang data kunjungan dari localStorage
+    JSON.parse(localStorage.getItem('visitors') || '[]').forEach(visitor => {
+      const photo = visitor.photo !== '-' ? `<img src="${visitor.photo}" width="60">` : '-';
+      document.getElementById('visitorList').innerHTML += `<tr><td>${visitor.name}</td><td>${visitor.purpose}</td><td>${visitor.identity}</td><td>${visitor.date}</td><td>${photo}</td></tr>`;
+    });
+  </script>
+</body>
+</html>
