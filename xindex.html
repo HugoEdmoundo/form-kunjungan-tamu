@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Kunjungan</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('background.webp') fixed;
+      background-size: cover;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid rgba(255, 105, 60, 0.3);
+      flex-wrap: wrap;
+    }
+    .header img {
+      width: 80px;
+      margin-right: 15px;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      color: #ff5e62;
+    }
+    .header p {
+      font-size: 0.9rem;
+      margin-top: 8px;
+      color: #666;
+    }
+    .camera-container {
+      width: 100%;
+      height: 200px;
+      margin: 15px 0;
+      background: linear-gradient(to bottom, #ffecd2, #fcb69f);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+    video, .photo-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .btn-primary {
+      background: #ff5e62;
+      border-color: #ff5e62;
+    }
+    .btn-secondary {
+      background: #ff9966;
+      border-color: #ff9966;
+    }
+    .btn-danger {
+      background: #ff4757;
+      border-color: #ff4757;
+    }
+    .table th {
+      background: #ff7e5f;
+      color: white;
+    }
+    .table td, .table th {
+      border-bottom: 1px solid #ffddd2;
+      vertical-align: middle;
+    }
+    #photoPreview {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #666;
+      font-size: 1.1rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (min-width: 768px) {
+      .header img {
+        width: 100px;
+        margin-right: 20px;
+      }
+      .header h1 {
+        font-size: 1.8rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .container {
+        padding: 15px;
+      }
+      .header img {
+        width: 60px;
+      }
+      .camera-controls .btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="logo.png" alt="logo" class="img-fluid">
+      <div>
+        <h1 class="mb-0">Telkom Landmark Tower 2</h1>
+        <p class="mb-0">Jl. Jend. Gatot Subroto Kav. 52 Gatot Subroto, Jakarta Selatan</p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <form class="bg-white p-3 rounded shadow-sm" id="visitForm">
+          <div class="mb-3">
+            <label for="name" class="form-label fw-bold" style="color: #ff5e62;">Nama</label>
+            <input type="text" class="form-control border-0 border-bottom border-2 border-warning" id="name" placeholder="Nama lengkap" required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="purpose" class="form-label fw-bold" style="color: #ff5e62;">Tujuan</label>
+            <input type="text" class="form-control border-0 border-bottom border-2 border-warning" id="purpose" placeholder="Tujuan kunjungan" required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="identity" class="form-label fw-bold" style="color: #ff5e62;">Identitas</label>
+            <input type="text" class="form-control border-0 border-bottom border-2 border-warning" id="identity" placeholder="Visitor/WaliMurid" required>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label fw-bold" style="color: #ff5e62;">Ambil Foto</label>
+            <div class="camera-container">
+              <video id="liveCamera" autoplay playsinline class="d-none"></video>
+              <div id="photoPreview">Pratinjau foto akan muncul disini</div>
+            </div>
+            <div class="camera-controls d-flex gap-2 flex-wrap my-2">
+              <button type="button" class="btn btn-primary" id="startCamera">Aktifkan Kamera</button>
+              <button type="button" class="btn btn-secondary" id="takePhoto" disabled>Ambil Foto</button>
+              <button type="button" class="btn btn-secondary" id="uploadPhoto">Unggah Foto</button>
+            </div>
+            <input type="file" id="photoUpload" accept="image/*" class="d-none">
+          </div>
+          
+          <div class="d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Simpan Kunjungan</button>
+            <button type="reset" class="btn btn-danger" id="resetBtn">Reset Form</button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="col-lg-6">
+        <div class="bg-white p-3 rounded shadow-sm h-100">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0" style="color: #ff5e62; font-size: 1.3rem;">Daftar Kunjungan</h2>
+            <button id="clearAllBtn" class="btn btn-danger btn-sm">Hapus Semua Data</button>
+          </div>
+          
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Tujuan</th>
+                  <th>Identitas</th>
+                  <th>Tanggal</th>
+                  <th>Foto</th>
+                </tr>
+              </thead>
+              <tbody id="visitorList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    const video = document.getElementById('liveCamera');
+    const preview = document.getElementById('photoPreview');
+    const startBtn = document.getElementById('startCamera');
+    const takeBtn = document.getElementById('takePhoto');
+    const uploadBtn = document.getElementById('photoUpload');
+    const uploadPhotoBtn = document.getElementById('uploadPhoto');
+    const form = document.getElementById('visitForm');
+    let stream = null;
+
+    // Fungsi untuk memuat data dari localStorage
+    function loadVisitors() {
+        const visitors = JSON.parse(localStorage.getItem('visitors')) || [];
+        return Array.isArray(visitors) ? visitors : [];
+    }
+
+    // Fungsi untuk menyimpan data ke localStorage
+    function saveVisitors(visitors) {
+        localStorage.setItem('visitors', JSON.stringify(visitors));
+    }
+
+    // Fungsi untuk menampilkan data visitor
+    function displayVisitors() {
+        const visitors = loadVisitors();
+        const visitorList = document.getElementById('visitorList');
+        visitorList.innerHTML = '';
+        
+        visitors.forEach(visitor => {
+            const photo = visitor.photo !== '-' ? `<img src="${visitor.photo}" width="60" style="border-radius:4px">` : '-';
+            visitorList.innerHTML += `
+                <tr>
+                    <td>${visitor.name}</td>
+                    <td>${visitor.purpose}</td>
+                    <td>${visitor.identity}</td>
+                    <td>${visitor.date}</td>
+                    <td>${photo}</td>
+                </tr>`;
+        });
+    }
+
+    // Memuat data saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', displayVisitors);
+
+    startBtn.addEventListener('click', async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    width: { ideal: 500 },
+                    height: { ideal: 300 },
+                    facingMode: "user" 
+                } 
+            });
+            video.srcObject = stream;
+            video.classList.remove('d-none');
+            preview.classList.add('d-none');
+            takeBtn.disabled = false;
+            startBtn.disabled = true;
+        } catch (err) {
+            alert("Izinkan akses kamera untuk mengambil foto");
+            console.error("Error accessing camera:", err);
+        }
+    });
+
+    takeBtn.addEventListener('click', () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        const photoData = canvas.toDataURL('image/jpeg', 0.8); // Use JPEG with compression
+        preview.innerHTML = `<img src="${photoData}" style="width:100%;height:100%;object-fit:cover;">`;
+        preview.classList.remove('d-none');
+        
+        // Stop all tracks
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            video.classList.add('d-none');
+        }
+        
+        startBtn.disabled = false;
+        takeBtn.disabled = true;
+    });
+
+    uploadPhotoBtn.addEventListener('click', () => {
+        uploadBtn.click();
+    });
+
+    uploadBtn.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                alert('Harap pilih file gambar');
+                return;
+            }
+            
+            // Check file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Ukuran file maksimal 2MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                preview.innerHTML = `<img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+                preview.classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const purpose = document.getElementById('purpose').value.trim();
+        const identity = document.getElementById('identity').value.trim();
+        
+        if (!name || !purpose || !identity) {
+            alert('Harap isi semua field yang diperlukan');
+            return;
+        }
+        
+        const date = new Date().toLocaleString('id-ID');
+        const photo = preview.querySelector('img')?.src || '-';
+        
+        // Membuat objek visitor baru
+        const newVisitor = { name, purpose, identity, date, photo };
+        
+        // Mengambil data yang ada dan menambahkan yang baru
+        const visitors = loadVisitors();
+        visitors.unshift(newVisitor);
+        saveVisitors(visitors);
+        
+        // Memperbarui tampilan
+        displayVisitors();
+        
+        // Reset form
+        form.reset();
+        preview.innerHTML = 'Pratinjau foto akan muncul disini';
+        preview.classList.remove('d-none');
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+            video.classList.add('d-none');
+        }
+        startBtn.disabled = false;
+        takeBtn.disabled = true;
+    });
+
+    document.getElementById('clearAllBtn').addEventListener('click', () => {
+        if (confirm('Apakah Anda yakin ingin menghapus semua data kunjungan?')) {
+            localStorage.removeItem('visitors');
+            displayVisitors();
+        }
+    });
+
+    // Handle form reset
+    form.addEventListener('reset', () => {
+        preview.innerHTML = 'Pratinjau foto akan muncul disini';
+        preview.classList.remove('d-none');
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+            video.classList.add('d-none');
+        }
+        startBtn.disabled = false;
+        takeBtn.disabled = true;
+    });
+  </script>
+</body>
+</html>
